@@ -5,13 +5,14 @@
   </h1>
 
   <div *ngFor="let n of img_url; let i = index ">
-    <div class="row" *ngIf="i % 3 == 0">
+    <!-- <div class="row" *ngIf="i % 3 == 0"> -->
+    <div class="row">
       <div class="col-sm-4 col-md-offset-1">
-        {{i}}
+        Index: {{i}}, Timestamp:{{n}}
         <img class="img-fluid" src="https://hiring.verkada.com/thumbs/{{n}}.jpg " alt="{{n}} " />
       </div>
     </div>
-    <div *ngIf="i % 3 == 1">
+    <!-- <div *ngIf="i % 3 == 1">
       <div class="col-sm-4">
         {{i}}
         <img class="img-fluid" src="https://hiring.verkada.com/thumbs/{{n}}.jpg " alt="{{n}} " />
@@ -24,5 +25,5 @@
       </div>
 
     </div>
+    </div> -->
   </div>
-</div>
