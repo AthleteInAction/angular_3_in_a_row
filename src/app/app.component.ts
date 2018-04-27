@@ -1,36 +1,70 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit{
+
+export class AppComponent implements OnInit {
+
   title = 'Verkada Take Home';
   max_ts:number = 1503031520;
   min_ts:number = 1500348260;
   interval_ts:number = 20;
-  img_url:number[]=[];
- //134163
-  counter:number;
+  counter:number = (this.max_ts - this.min_ts)/this.interval_ts;
+  image_rows:number[]=[];
 
+  waitingForImagesToLoad:boolean = false;
 
-   // = 134163;
-  ngOnInit() {
-    this.counter = (this.max_ts - this.min_ts)/this.interval_ts;
+  @HostListener("window:scroll", [])
+  onScroll(): void {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
 
-    console.log(this.counter)
-      for (let i = 0; i < 200; i++){
-        this.img_url.push(this.min_ts + i * this.interval_ts)
+      var count = this.image_rows.length;
+      if (count == 0){ return; }
+
+      if (!this.waitingForImagesToLoad){
+        this.waitingForImagesToLoad = true;
+        this.loadSet(30,this.image_rows[count-1][2].ts);
+        console.log('Bottom',new Date());
+        this.waitingForImagesToLoad = false;
+      }
+
+    }
+  }
+
+  loadSet = function(_amount,_start_ts){
+
+    console.log("loadSet:",_amount,_start_ts);
+    var row = [];
+
+    for(var i=1; i <= _amount; i++){
+
+      var new_ts = _start_ts + (i*this.interval_ts);
+
+      row.push({
+        ts: new_ts,
+        date: new Date(new_ts*1000),
+        url: 'https://hiring.verkada.com/thumbs/'+new_ts+'.jpg'
+      })
+
+      if (i%3 == 0 || new_ts >= this.max_ts){
+
+        this.image_rows.push(row);
+        row = [];
 
       }
-      console.log(this.img_url);
+
     }
 
- //  this.counter = (max_ts - min_ts)/interval_ts;
- //
- // }
-  // timestamp = min_ts + interval_ts
-  // for (i = min_ts; i <= max_ts; i+interval_ts)
-      // {{i}}
+  }
+
+  ngOnInit(){
+
+    // this.loadSet(30,this.max_ts-(this.interval_ts*10))
+    this.loadSet(30,this.min_ts);
+
+  }
+
 }
